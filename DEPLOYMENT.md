@@ -48,5 +48,50 @@ You will need 3 free accounts:
 
 ---
 
+---
+
 ## 🎉 Success!
 Your app is now live. Share the Vercel link with anyone!
+
+---
+
+## 🔧 Troubleshooting
+
+### CORS Error on Production
+If you see `Access to XMLHttpRequest has been blocked by CORS policy`:
+
+1. **Check Render Logs:**
+   - Go to Render Dashboard → Your Service → Logs
+   - Look for errors like "CORS blocked origin"
+   
+2. **Verify Environment Variables:**
+   - Make sure `VITE_API_URL` on Vercel matches your Render backend URL **exactly**
+   - No trailing slash: ✅ `https://repodig.onrender.com` ❌ `https://repodig.onrender.com/`
+
+3. **Redeploy Backend:**
+   - After updating CORS configuration in `server.js`, redeploy on Render
+   - Go to Render → Manual Deploy → Deploy Latest Commit
+
+### Backend Not Responding (ERR_FAILED)
+If the backend shows `net::ERR_FAILED`:
+
+1. **Check if backend is running:**
+   - Visit your backend URL directly: `https://repodig.onrender.com/health`
+   - Should return: "GraphRAG Archaeologist Backend is running"
+
+2. **Check Render deployment status:**
+   - Green = Running
+   - Red = Failed (check logs for errors)
+
+3. **Common issues:**
+   - Neo4j credentials incorrect → Check environment variables
+   - Build failed → Check Render build logs
+   - Free tier sleep → First request may take 30-60 seconds to wake up
+
+### Neo4j Connection Issues
+If you see "Failed to connect to Neo4j":
+
+1. Verify `NEO4J_URI` starts with `neo4j+s://` (not `bolt://`)
+2. Check password is correct (copy-paste from Aura console)
+3. Ensure Neo4j instance is running (green dot in Aura console)
+
