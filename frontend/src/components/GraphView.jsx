@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useCallback, useState, useMemo } from 'react'
 import ForceGraph2D from 'react-force-graph-2d';
 import * as d3 from 'd3-force';
 
-const GraphView = ({ graphData, theme }) => {
+const GraphView = ({ graphData, theme, onNodeClick }) => {
     const fgRef = useRef();
     const containerRef = useRef();
     const [dimensions, setDimensions] = useState({ width: 800, height: 600 });
@@ -120,6 +120,12 @@ const GraphView = ({ graphData, theme }) => {
         setHighlightLinks(newHighlightLinks);
     };
 
+    const handleNodeClick = node => {
+        if (node && onNodeClick) {
+            onNodeClick(node);
+        }
+    };
+
     const paintNode = useCallback((node, ctx, globalScale) => {
         const isHovered = node === hoverNode;
         const isHighlighted = highlightNodes.has(node.id);
@@ -174,6 +180,7 @@ const GraphView = ({ graphData, theme }) => {
                 dagLevelDistance={140}
 
                 onNodeHover={handleNodeHover}
+                onNodeClick={handleNodeClick}
                 nodeCanvasObject={paintNode}
                 nodePointerAreaPaint={(node, color, ctx) => {
                     ctx.fillStyle = color;

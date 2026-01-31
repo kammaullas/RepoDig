@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import GraphView from './components/GraphView';
 import ControlPanel from './components/ControlPanel';
+import NodeDetailsPanel from './components/NodeDetailsPanel';
 import './App.css'; // Ensure we can style the body
 
 function App() {
@@ -10,9 +11,10 @@ function App() {
 
   const [theme, setTheme] = useState('solar');
   const [showSidebar, setShowSidebar] = useState(true);
+  const [selectedNode, setSelectedNode] = useState(null);
 
   // Cloud API URL with local fallback
-  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
 
   const handleIngest = async (repoUrl) => {
     setLoading(true);
@@ -42,6 +44,10 @@ function App() {
     }
   };
 
+  const handleNodeClick = (node) => {
+    setSelectedNode(node);
+  };
+
   return (
     <div className="App" data-theme={theme}>
       {/* Background Graph Layer */}
@@ -61,7 +67,7 @@ function App() {
           }}>
             SYSTEM INITIALIZING...
           </div>
-          : <GraphView graphData={graphData} theme={theme} />
+          : <GraphView graphData={graphData} theme={theme} onNodeClick={handleNodeClick} />
         }
       </div>
 
@@ -107,6 +113,15 @@ function App() {
         >
           Show Menu
         </button>
+      )}
+
+      {/* Node Details Panel */}
+      {selectedNode && (
+        <NodeDetailsPanel
+          node={selectedNode}
+          onClose={() => setSelectedNode(null)}
+          theme={theme}
+        />
       )}
     </div>
   );
