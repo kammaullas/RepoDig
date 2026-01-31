@@ -11,10 +11,13 @@ function App() {
   const [theme, setTheme] = useState('solar');
   const [showSidebar, setShowSidebar] = useState(true);
 
+  // Cloud API URL with local fallback
+  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+
   const handleIngest = async (repoUrl) => {
     setLoading(true);
     try {
-      const response = await axios.post('http://localhost:3000/ingest', { repoUrl });
+      const response = await axios.post(`${API_URL}/ingest`, { repoUrl });
 
       if (response.status === 200) {
         console.log("Ingestion successful, fetching graph...");
@@ -32,7 +35,7 @@ function App() {
 
   const fetchGraph = async () => {
     try {
-      const res = await axios.get('http://localhost:3000/graph');
+      const res = await axios.get(`${API_URL}/graph`);
       setGraphData(res.data);
     } catch (error) {
       console.error('Fetch graph failed:', error);

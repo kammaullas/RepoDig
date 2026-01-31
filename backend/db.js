@@ -5,7 +5,16 @@ const uri = process.env.NEO4J_URI || 'bolt://localhost:7687';
 const user = process.env.NEO4J_USER || 'neo4j';
 const password = process.env.NEO4J_PASSWORD || 'password';
 
-const driver = neo4j.driver(uri, neo4j.auth.basic(user, password), { disableLosslessIntegers: true, encrypted: 'ENCRYPTION_OFF' });
+// Cloud databases (AuraDB) require encryption, local ones usually don't
+const isSecure = uri.startsWith('neo4j+s') || uri.startsWith('bolt+s');
+const driver = neo4j.driver(
+  uri,
+  neo4j.auth.basic(user, password),
+  {
+    disableLosslessIntegers: true,
+    encrypted: isSecure ? 'ENCRYPTION_ON' : 'ENCRYPTION_OFF'
+  }
+);
 
 const verifyConnection = async () => {
   try {
