@@ -123,14 +123,23 @@ process.on('unhandledRejection', (reason, promise) => {
 });
 
 const startServer = async () => {
-    try {
-        await verifyConnection();
-        app.listen(port, () => {
-            console.log(`Server listening on port ${port}`);
-        });
-    } catch (e) {
-        console.error('Failed to start server:', e);
-        process.exit(1);
+    const maxRetries = 3;
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+        try {
+            await verifyConnection();
+            app.listen(port, () => {
+                console.log(`Server listening on port ${port}`);
+            });
+            return;
+        } catch (e) {
+            console.error(`Connection attempt ${attempt}/${maxRetries} failed:`, e.message);
+            if (attempt === maxRetries) {
+                console.error('Failed to start server after all retries.');
+                process.exit(1);
+            }
+            console.log(`Retrying in 3 seconds...`);
+            await new Promise(r => setTimeout(r, 3000));
+        }
     }
 };
 
